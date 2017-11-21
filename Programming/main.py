@@ -8,7 +8,7 @@ class MultiLayerPerceptron():
 		self.features = features
 		self.targets  = targets
 
-		self.nhidden = int((self.features.shape[1] + self.targets.shape[1])/2)
+		self.nhidden = int((self.features.shape[1] + self.targets.shape[1])/2) + 1
 
 		self.w12 = 2*np.random.rand(self.features.shape[1], self.nhidden) - 1
 		self.w23 = 2*np.random.rand(self.nhidden, self.nhidden)  		  - 1
@@ -42,14 +42,14 @@ class MultiLayerPerceptron():
 
 				delError     = error*self.activatePrime(z)
 
-				hidden23_error = np.dot(delError, self.w34)
+				hidden23_error = np.dot(self.w34, delError)
 				delHidden23 = hidden23_error*self.activatePrime(h2)
 
-				hidden12_error = np.dot(delHidden23, self.w23)
+				hidden12_error = np.dot(self.w23, delHidden23)
 				delHidden12 = hidden12_error*self.activatePrime(h1)
 
-				dw34 += delError*h2
-				dw23 += delHidden23*h1
+				dw34 += delError*h2[:,None]
+				dw23 += delHidden23*h1[:,None]
 				dw12 += delHidden12*x[:,None]
 
 				error_rms += np.mean(error**2)
