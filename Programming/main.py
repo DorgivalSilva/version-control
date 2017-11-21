@@ -26,6 +26,7 @@ class MultiLayerPerceptron():
 	def train(self, features, targets, epochs, lr):
 		Total_error = []
 		for e in range(epochs):
+			dw12, dw23 = np.zeros(self.w12.shape), np.zeros(self.w23.shape)
 			for x, y in zip(features, targets):
 
 				h1 = self.activate(np.dot(x, self.w12))
@@ -37,13 +38,13 @@ class MultiLayerPerceptron():
 				hidden_error = np.dot(self.w23, delError)
 				delHidden    = hidden_error*self.activatePrime(h1)
 
-				dw23 = delError*h1[:,None]
-				dw12 = delHidden*x[:,None]
+				dw23 += delError*h1[:,None]
+				dw12 += delHidden*x[:,None]
 
 				error_rms = np.mean(error**2)
 
-				self.w23 += lr*dw23/features.shape[0]
-				self.w12 += lr*dw12/features.shape[0]
+			self.w23 += lr*dw23/features.shape[0]
+			self.w12 += lr*dw12/features.shape[0]
 
 			Total_error.append(error_rms)
 
